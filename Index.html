@@ -1,109 +1,88 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Duck Game</title>
-    <style>
-        body {
-            text-align: center;
-            background-color: skyblue;
-            font-family: Arial, sans-serif;
-        }
-        canvas {
-            background-color: lightgreen;
-            border: 2px solid black;
-        }
-    </style>
-</head>
-<body>
-    <h1>Duck Game</h1>
-    <canvas id="gameCanvas"></canvas>
-    <script>
-        // Canvas setup
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-        canvas.width = 600;
-        canvas.height = 400;
+<script>
+    // Canvas setup
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    canvas.width = 600;
+    canvas.height = 400;
 
-        // Duck properties
-        const duck = {
-            x: 50,
-            y: 300,
-            width: 40,
-            height: 40,
-            color: "yellow",
-            velocityX: 0,
-            velocityY: 0,
-            speed: 3,
-            gravity: 0.5,
-            jumpStrength: -10,
-            isJumping: false
-        };
+    // Load the duck image
+    const duckImg = new Image();
+    duckImg.src = "duck.png"; // Make sure this file is in the same directory as your HTML file
 
-        // Ground
-        const groundHeight = 50;
-        const groundY = canvas.height - groundHeight;
+    // Duck properties
+    const duck = {
+        x: 50,
+        y: 300,
+        width: 40,
+        height: 40,
+        velocityX: 0,
+        velocityY: 0,
+        speed: 3,
+        gravity: 0.5,
+        jumpStrength: -10,
+        isJumping: false
+    };
 
-        // Controls
-        const keys = {};
-        window.addEventListener("keydown", (e) => { keys[e.code] = true; });
-        window.addEventListener("keyup", (e) => { keys[e.code] = false; });
+    // Ground
+    const groundHeight = 50;
+    const groundY = canvas.height - groundHeight;
 
-        function update() {
-            // Left & Right movement
-            if (keys["ArrowLeft"]) {
-                duck.velocityX = -duck.speed;
-            } else if (keys["ArrowRight"]) {
-                duck.velocityX = duck.speed;
-            } else {
-                duck.velocityX = 0;
-            }
+    // Controls
+    const keys = {};
+    window.addEventListener("keydown", (e) => { keys[e.code] = true; });
+    window.addEventListener("keyup", (e) => { keys[e.code] = false; });
 
-            // Jump
-            if (keys["Space"] && !duck.isJumping) {
-                duck.velocityY = duck.jumpStrength;
-                duck.isJumping = true;
-            }
-
-            // Apply gravity
-            duck.velocityY += duck.gravity;
-
-            // Move the duck
-            duck.x += duck.velocityX;
-            duck.y += duck.velocityY;
-
-            // Keep duck within canvas bounds
-            if (duck.x < 0) duck.x = 0;
-            if (duck.x + duck.width > canvas.width) duck.x = canvas.width - duck.width;
-
-            // Collision with ground
-            if (duck.y + duck.height >= groundY) {
-                duck.y = groundY - duck.height;
-                duck.velocityY = 0;
-                duck.isJumping = false;
-            }
+    function update() {
+        // Left & Right movement
+        if (keys["ArrowLeft"]) {
+            duck.velocityX = -duck.speed;
+        } else if (keys["ArrowRight"]) {
+            duck.velocityX = duck.speed;
+        } else {
+            duck.velocityX = 0;
         }
 
-        function draw() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-            // Draw ground
-            ctx.fillStyle = "brown";
-            ctx.fillRect(0, groundY, canvas.width, groundHeight);
-
-            // Draw duck
-            ctx.fillStyle = duck.color;
-            ctx.fillRect(duck.x, duck.y, duck.width, duck.height);
+        // Jump
+        if (keys["Space"] && !duck.isJumping) {
+            duck.velocityY = duck.jumpStrength;
+            duck.isJumping = true;
         }
 
-        function gameLoop() {
-            update();
-            draw();
-            requestAnimationFrame(gameLoop);
-        }
+        // Apply gravity
+        duck.velocityY += duck.gravity;
 
-        gameLoop();
-    </script>
-</body>
-</html>
+        // Move the duck
+        duck.x += duck.velocityX;
+        duck.y += duck.velocityY;
+
+        // Keep duck within canvas bounds
+        if (duck.x < 0) duck.x = 0;
+        if (duck.x + duck.width > canvas.width) duck.x = canvas.width - duck.width;
+
+        // Collision with ground
+        if (duck.y + duck.height >= groundY) {
+            duck.y = groundY - duck.height;
+            duck.velocityY = 0;
+            duck.isJumping = false;
+        }
+    }
+
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // Draw ground
+        ctx.fillStyle = "brown";
+        ctx.fillRect(0, groundY, canvas.width, groundHeight);
+
+        // Draw duck image instead of a rectangle
+        ctx.drawImage(duckImg, duck.x, duck.y, duck.width, duck.height);
+    }
+
+    function gameLoop() {
+        update();
+        draw();
+        requestAnimationFrame(gameLoop);
+    }
+
+    gameLoop();
+</script>
